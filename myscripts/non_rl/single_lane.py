@@ -7,9 +7,12 @@ from myscripts.nets.single_lane import SingleLane
 from myscripts.nets.single_lane import ADDITIONAL_NET_PARAMS
 from flow.envs.ring.accel import ADDITIONAL_ENV_PARAMS
 import random
-#from myscripts.envs.single_lane import SingleLaneEnv
+from myscripts.envs.single_lane import SingleLaneEnv
+from myscripts.envs import single_lane
 
 vehicles = VehicleParams()
+dur1 = single_lane.duration1
+dur2 = single_lane.duration2
 
 # Human vehicle
 vehicles.add(
@@ -38,12 +41,12 @@ env_params = EnvParams(horizon=2000, additional_params=ADDITIONAL_ENV_PARAMS.cop
 net_params = NetParams(additional_params=ADDITIONAL_NET_PARAMS.copy())
 
 tl_logic =  TrafficLightParams(baseline = False)
-phases = [{"duration": "31", "state": "GrGr"},
-          {"duration": "6", "state": "yryr"},
-          {"duration": "31", "state": "rGrG"},
-          {"duration": "6", "state": "ryry"}]
+phases = [{"duration": "{0}".format(dur1), "state": "GrGr"},
+          {"duration": "{0}".format(dur2), "state": "yryr"},
+          {"duration": "{0}".format(dur1), "state": "rGrG"},
+          {"duration": "{0}".format(dur2), "state": "ryry"}]
 
-offset = random.randint(0, 37)
+offset = random.randint(0, dur1+dur2+1)
 tl_logic.add("t.l.", phases=phases, offset=offset)
 
 flow_params = dict(

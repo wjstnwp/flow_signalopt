@@ -2,7 +2,13 @@ from flow.envs import Env
 from gym.spaces.box import Box
 from flow.core import rewards
 from gym.spaces import Tuple
+from flow.core.params import TrafficLightParams
 import numpy as np
+import random
+
+offset = random.randint(0,41)
+duration1 = 40
+duration2 = 10
 
 ADDITIONAL_ENV_PARAMS = {
     "max_accel" : 1,
@@ -10,9 +16,6 @@ ADDITIONAL_ENV_PARAMS = {
     "target_speed" : 20,
     "tl_logic" : None,
 }
-
-def set_tllogic():
-    tl_logic = TrafficLightParams
 
 class SingleLaneEnv(Env):
     def __init__(self, env_params, sim_params, network, simulator='traci'):
