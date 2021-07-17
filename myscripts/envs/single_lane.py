@@ -11,11 +11,25 @@ duration1 = 40
 duration2 = 10
 
 ADDITIONAL_ENV_PARAMS = {
-    "max_accel" : 1,
-    "max_decle" : 1,
+    "max_accel" : 2,
+    "max_decel" : 1,
     "target_speed" : 20,
     "tl_logic" : None,
 }
+
+def set_tllogic():
+    tl_logic =  TrafficLightParams(baseline = False)
+    phases = [{"duration": "{0}".format(duration1), "state": "GrGr"},
+              {"duration": "{0}".format(duration2), "state": "yryr"},
+              {"duration": "{0}".format(duration1), "state": "rGrG"},
+              {"duration": "{0}".format(duration2), "state": "ryry"}]
+
+    offset = random.randint(0, duration1+duration2+1)
+    tl_logic.add("t.l.", phases=phases, offset=offset)
+
+    return tl_logic
+
+ADDITIONAL_ENV_PARAMS["tl_logic"] = set_tllogic()
 
 class SingleLaneEnv(Env):
     def __init__(self, env_params, sim_params, network, simulator='traci'):
@@ -29,6 +43,8 @@ class SingleLaneEnv(Env):
             self.tl_logic = env_params.additional_params['tl_logic']
         else:
             self.tl_logic = None
+        
+        self.time = 0
 
     def action_space(self):
         num_actions = self.initial_vehicles.num_rl_vehicles
@@ -62,9 +78,9 @@ class SingleLaneEnv(Env):
         ids = self.k.vehicle.get_ids()
         speed = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
         pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
-        pos_to_tl = [self.k.network.edge_length("befoer_tl") - pos(veh_id) for veh_id in ids]
+        pos_to_tl = [self.k.network.edge_length("before_tl") - pos(veh_id) for veh_id in ids]
 
-        self.k.traffic_light
+        
 
 
         return np.concatenate((speed, pos, pos_to_tl))
@@ -74,4 +90,8 @@ class SingleLaneEnv(Env):
         speeds = self.k.vehicle.get_speed(ids)
 
         return np.mean(speeds)
+
+    def timer(self):
+        self.time += self.sim_step
+            
 
