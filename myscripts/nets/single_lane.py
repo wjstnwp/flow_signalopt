@@ -10,7 +10,7 @@ ADDITIONAL_NET_PARAMS = {
     # nodes: start, tl, stop  ->  edges: before_tl, after_tl
     "num_edges" : 2,
     "num_nodes" : 3, 
-    "speed_limit" : 20,
+    "speed_limit" : 5,
     "position_tl" : net_len - 100
 }
 
