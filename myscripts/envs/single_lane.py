@@ -43,6 +43,7 @@ class SingleLaneEnv(Env):
         else:
             self.tl_logic = None
 
+    @property
     def action_space(self):
         num_actions = self.initial_vehicles.num_rl_vehicles
         accel_ub = self.env_params.additional_params["max_accel"]
@@ -53,20 +54,17 @@ class SingleLaneEnv(Env):
                    shape = (num_actions,), 
                    dtype = np.float32)
 
+    @property
     def observation_space(self):
-        speed = Box(
-            low = 0,
-            high = 1,
-            shape = (self.initial_vehicles.num_vehicles,),
-            dtype = np.float32)
-
-        pos = Box(
+    #     speed = Box(
+    #         low = 0,
+    #         high = np.inf,
+    #         shape = (4*self.initial_vehicles.num_vehicles,),)
+    
+        return Box(
             low = 0,
             high = np.inf,
-            shape = (self.initial_vehicles.num_vehicles,),
-            dtype = np.float32)
-        
-        return Tuple((speed, pos))
+            shape = (2*self.initial_vehicles.num_vehicles,),)
 
     def _apply_rl_actions(self, rl_actions):
         rl_ids = self.k.vehicle.get_rl_ids()
@@ -86,8 +84,8 @@ class SingleLaneEnv(Env):
 
     def compute_reward(self, rl_actions, **kwargs):
         ids = self.k.vehicle.get_ids()
-        reward = rewards.energy_consumption(self)
-        # speeds = self.k.vehicle.get_speed(ids)
+        # reward = rewards.veh_travel_time(self) + rewards.energy_consumption(self)
+        reward = rewards.rl_forward_progress(self) + rewards.energy_consumption(self)
         return reward
             
 
