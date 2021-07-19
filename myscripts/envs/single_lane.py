@@ -55,7 +55,7 @@ class SingleLaneEnv(Env):
 
     @property
     def observation_space(self):
-        return Box(low = 0,
+        return Box(low = 0, 
                    high = float("inf"),
                    shape = (4*self.initial_vehicles.num_vehicles,))
 
@@ -79,7 +79,7 @@ class SingleLaneEnv(Env):
         reward = rewards.rl_forward_progress(self) + rewards.energy_consumption(self)
         return reward
             
-
+  
 # class TestEnv(Env):
 #     def action_space(self):
 #         return Box(low=0, high=0, shape=(0,), dtype=np.float32)
