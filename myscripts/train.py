@@ -53,7 +53,7 @@ trials = run_experiments({
         "checkpoint_at_end": True,  # generate a checkpoint at the end
         "max_failures": 999,
         "stop": {  # stopping conditions
-            "training_iteration": 1,  # number of iterations to stop after
+            "training_iteration": 5,  # number of iterations to stop after
         },
     },
 })

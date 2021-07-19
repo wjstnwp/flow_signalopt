@@ -5,7 +5,7 @@ from flow.envs import TestEnv
 from flow.core.params import TrafficLightParams
 from nets.single_lane import SingleLane
 from nets.single_lane import ADDITIONAL_NET_PARAMS
-from envs.single_lane import SingleLaneEnv, ADDITIONAL_ENV_PARAMS, TestEnv
+from envs.single_lane import SingleLaneEnv, ADDITIONAL_ENV_PARAMS
 
 vehicles = VehicleParams()
 
@@ -31,7 +31,7 @@ vehicles.add(
     num_vehicles=1
     )
 
-sim_params = SumoParams(sim_step=0.1, render=False, lateral_resolution=0.1)
+sim_params = SumoParams(sim_step=0.1, render=False, restart_instance=True)
 env_params = EnvParams(horizon=2000, additional_params=ADDITIONAL_ENV_PARAMS.copy())
 net_params = NetParams(additional_params=ADDITIONAL_NET_PARAMS.copy())
 

@@ -51,20 +51,13 @@ class SingleLaneEnv(Env):
 
         return Box(low = accel_lb,
                    high = accel_ub,
-                   shape = (num_actions,), 
-                   dtype = np.float32)
+                   shape = (num_actions,))
 
     @property
     def observation_space(self):
-    #     speed = Box(
-    #         low = 0,
-    #         high = np.inf,
-    #         shape = (4*self.initial_vehicles.num_vehicles,),)
-    
-        return Box(
-            low = 0,
-            high = np.inf,
-            shape = (2*self.initial_vehicles.num_vehicles,),)
+        return Box(low = 0,
+                   high = float("inf"),
+                   shape = (4*self.initial_vehicles.num_vehicles,))
 
     def _apply_rl_actions(self, rl_actions):
         rl_ids = self.k.vehicle.get_rl_ids()
@@ -73,37 +66,35 @@ class SingleLaneEnv(Env):
     def get_state(self, **kwargs):
         ids = self.k.vehicle.get_ids()
         speed = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
-        pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
-        # pos_to_tl = [self.k.network.edge_length("before_tl") - pos(veh_id) for veh_id in ids]
-        # current_time = self.k.vehicle.get_timestep(ids[0])/1000
-        # time_to_greenstart = [(duration1+duration2-offset-current_time)/(duration1+duration2)]
-        # time_to_greenend = [(duration1-offset-current_time)/(duration1+duration2)]
+        pos_to_tl = [(self.k.network.edge_length("before_tl") - self.k.vehicle.get_x_by_id(veh_id)) for veh_id in ids]
+        current_time = self.k.vehicle.get_timestep(ids[0])/1000
+        time_to_greenstart = [(duration1+duration2-offset-current_time)%(duration1+duration2)]
+        time_to_greenend = [(duration1-offset-current_time)%(duration1+duration2)]
 
-        # return np.concatenate((speed, pos, pos_to_tl, time_to_greenstart, time_to_greenend))
-        return np.concatenate((speed, pos))
+        return np.concatenate((speed, pos_to_tl, time_to_greenstart, time_to_greenend))
+        # return np.concatenate((speed, pos))
 
     def compute_reward(self, rl_actions, **kwargs):
-        ids = self.k.vehicle.get_ids()
         # reward = rewards.veh_travel_time(self) + rewards.energy_consumption(self)
         reward = rewards.rl_forward_progress(self) + rewards.energy_consumption(self)
         return reward
             
 
-class TestEnv(Env):
-    def action_space(self):
-        return Box(low=0, high=0, shape=(0,), dtype=np.float32)
+# class TestEnv(Env):
+#     def action_space(self):
+#         return Box(low=0, high=0, shape=(0,), dtype=np.float32)
 
-    def observation_space(self):
-        return Box(low=0, high=0, shape=(0,), dtype=np.float32)
+#     def observation_space(self):
+#         return Box(low=0, high=0, shape=(0,), dtype=np.float32)
 
-    def _apply_rl_actions(self, rl_actions):
-        return
+#     def _apply_rl_actions(self, rl_actions):
+#         return
 
-    def compute_reward(self, rl_actions, **kwargs):
-        if "reward_fn" in self.env_params.additional_params:
-            return self.env_params.additional_params["reward_fn"](self)
-        else:
-            return 0
+#     def compute_reward(self, rl_actions, **kwargs):
+#         if "reward_fn" in self.env_params.additional_params:
+#             return self.env_params.additional_params["reward_fn"](self)
+#         else:
+#             return 0
 
-    def get_state(self, **kwargs):
-        return np.array([])
+#     def get_state(self, **kwargs):
+#         return np.array([])

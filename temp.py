@@ -1,6 +1,7 @@
 import numpy as np
 
-a = [[i, i*2] for i in range(10)]
+a = [1,2,3]
 
-for j in a:
-    print(j[0])
+b = [1,1,1]
+
+print(a-b)
