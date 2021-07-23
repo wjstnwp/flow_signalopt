@@ -1,7 +1,6 @@
 from flow.controllers import IDMController, RLController
 from flow.core.params import SumoParams, EnvParams, InitialConfig, NetParams
 from flow.core.params import VehicleParams, SumoLaneChangeParams
-from flow.envs import TestEnv
 from flow.core.params import TrafficLightParams
 from nets.single_lane import SingleLane
 from nets.single_lane import ADDITIONAL_NET_PARAMS
@@ -32,7 +31,7 @@ vehicles.add(
     )
 
 sim_params = SumoParams(sim_step=0.1, render=False, restart_instance=True)
-env_params = EnvParams(horizon=2000, additional_params=ADDITIONAL_ENV_PARAMS.copy())
+env_params = EnvParams(horizon=10000, additional_params=ADDITIONAL_ENV_PARAMS.copy())
 net_params = NetParams(additional_params=ADDITIONAL_NET_PARAMS.copy())
 
 tl_logic = ADDITIONAL_ENV_PARAMS["tl_logic"]

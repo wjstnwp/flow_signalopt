@@ -11,7 +11,7 @@ from flow.utils.registry import make_create_env
 from flow.utils.rllib import FlowParamsEncoder
 from non_rl.single_lane import flow_params
 
-HORIZON = 1500
+HORIZON = 10000
 N_CPUS = 2
 N_ROLLOUTS = 1
 
@@ -53,7 +53,7 @@ trials = run_experiments({
         "checkpoint_at_end": True,  # generate a checkpoint at the end
         "max_failures": 999,
         "stop": {  # stopping conditions
-            "training_iteration": 5,  # number of iterations to stop after
+            "training_iteration": 10,  # number of iterations to stop after
         },
     },
 })

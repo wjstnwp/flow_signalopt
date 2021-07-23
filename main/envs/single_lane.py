@@ -13,7 +13,6 @@ offset = random.randint(0, duration1+duration2+1)
 ADDITIONAL_ENV_PARAMS = {
     "max_accel" : 1,
     "max_decel" : 1,
-    "target_speed" : 20,
     "tl_logic" : None,
 }
 
@@ -51,13 +50,13 @@ class SingleLaneEnv(Env):
 
         return Box(low = accel_lb,
                    high = accel_ub,
-                   shape = (num_actions,))
+                   shape = (num_actions,),)
 
     @property
     def observation_space(self):
-        return Box(low = 0, 
+        return Box(low = -0, 
                    high = float("inf"),
-                   shape = (4*self.initial_vehicles.num_vehicles,))
+                   shape = (4*self.initial_vehicles.num_vehicles,),)
 
     def _apply_rl_actions(self, rl_actions):
         rl_ids = self.k.vehicle.get_rl_ids()
@@ -65,18 +64,27 @@ class SingleLaneEnv(Env):
 
     def get_state(self, **kwargs):
         ids = self.k.vehicle.get_ids()
-        speed = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
-        pos_to_tl = [(self.k.network.edge_length("before_tl") - self.k.vehicle.get_x_by_id(veh_id)) for veh_id in ids]
-        current_time = self.k.vehicle.get_timestep(ids[0])/1000
+        # speed = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
+        # pos_to_tl = [(self.k.network.edge_length("before_tl") - self.k.vehicle.get_x_by_id(veh_id)) for veh_id in ids]
+        # pos_to_tl1 = list(map(lambda x: max(x,0), pos_to_tl))
+        if len(ids) != 0:
+            current_time = self.k.vehicle.get_timestep(ids[0])/1000
+            speed = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
+            pos_to_tl = [(self.k.network.edge_length("before_tl") - self.k.vehicle.get_x_by_id(veh_id)) for veh_id in ids]
+            pos_to_tl1 = list(map(lambda x: max(x,0), pos_to_tl))
+        else:
+            current_time = 0
+            speed = [0]
+            pos_to_tl1 = [0]
+
         time_to_greenstart = [(duration1+duration2-offset-current_time)%(duration1+duration2)]
         time_to_greenend = [(duration1-offset-current_time)%(duration1+duration2)]
 
-        return np.concatenate((speed, pos_to_tl, time_to_greenstart, time_to_greenend))
-        # return np.concatenate((speed, pos))
+        return np.concatenate((speed, pos_to_tl1, time_to_greenstart, time_to_greenend))
 
     def compute_reward(self, rl_actions, **kwargs):
-        # reward = rewards.veh_travel_time(self) + rewards.energy_consumption(self)
-        reward = rewards.rl_forward_progress(self) + rewards.energy_consumption(self)
+        # reward = rewards.rl_forward_progress(self) + rewards.energy_consumption(self)
+        reward = rewards.rl_forward_progress(self)
         return reward
             
   
