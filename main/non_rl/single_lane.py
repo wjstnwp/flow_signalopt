@@ -31,7 +31,7 @@ vehicles.add(
     )
 
 sim_params = SumoParams(sim_step=0.1, render=False, restart_instance=True)
-env_params = EnvParams(horizon=10000, additional_params=ADDITIONAL_ENV_PARAMS.copy())
+env_params = EnvParams(horizon=5000, additional_params=ADDITIONAL_ENV_PARAMS.copy())
 net_params = NetParams(additional_params=ADDITIONAL_NET_PARAMS.copy())
 
 tl_logic = ADDITIONAL_ENV_PARAMS["tl_logic"]

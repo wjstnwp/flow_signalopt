@@ -1,6 +1,6 @@
 from flow.envs import Env
 from gym.spaces.box import Box
-from flow.core import rewards
+from rewards import *
 from gym.spaces import Tuple
 from flow.core.params import TrafficLightParams
 import numpy as np
@@ -83,8 +83,9 @@ class SingleLaneEnv(Env):
         return np.concatenate((speed, pos_to_tl1, time_to_greenstart, time_to_greenend))
 
     def compute_reward(self, rl_actions, **kwargs):
-        # reward = rewards.rl_forward_progress(self) + rewards.energy_consumption(self)
-        reward = rewards.rl_forward_progress(self)
+        # reward = rewards.rl_forward_progress(self) + rewards.energy_consumption(self, 0.0001)
+        reward = rl_forward_progress(self) + penalize_standstill(self)
+        # reward = rewards.rl_forward_progress(self)
         return reward
             
   

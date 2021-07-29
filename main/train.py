@@ -11,7 +11,7 @@ from flow.utils.registry import make_create_env
 from flow.utils.rllib import FlowParamsEncoder
 from non_rl.single_lane import flow_params
 
-HORIZON = 10000
+HORIZON = 5000
 N_CPUS = 2
 N_ROLLOUTS = 1
 
@@ -39,13 +39,12 @@ config['env_config']['flow_params'] = flow_json
 config['env_config']['run'] = alg_run
 
 create_env, gym_name = make_create_env(params=flow_params, version=0)
-
 register_env(gym_name, create_env)
 
 trials = run_experiments({
     flow_params["exp_tag"]: {
         "run": alg_run,
-        "env": gym_name,
+        "env": gym_name, 
         "config": {
             **config
         },
@@ -53,7 +52,7 @@ trials = run_experiments({
         "checkpoint_at_end": True,  # generate a checkpoint at the end
         "max_failures": 999,
         "stop": {  # stopping conditions
-            "training_iteration": 10,  # number of iterations to stop after
+            "training_iteration": 1000,  # number of iterations to stop after
         },
     },
 })
